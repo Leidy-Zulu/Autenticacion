@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -29,6 +30,7 @@ import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterAuthClient;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import com.twitter.sdk.android.core.models.User;
 
@@ -36,6 +38,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+
+import retrofit2.Call;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -71,6 +75,21 @@ public class MainActivity extends AppCompatActivity {
                 TwitterAuthToken authToken = session.getAuthToken();
                 String token = authToken.token;
                 String secret = authToken.secret;
+                TwitterAuthClient authClient = new TwitterAuthClient();
+                //TwitterCore.getInstance().getApiClient(session).getAccountService().verifyCredentials(true, false,  new Callback<User>());
+                getEmailTwiiter(session);
+                Call<User> userResult = TwitterCore.getInstance().getApiClient(session).getAccountService().verifyCredentials(true,false, true);
+                userResult.enqueue(new Callback<User>() {
+                    @Override
+                    public void success(Result<User> result) {
+                        String name = result.data.description;
+                    }
+
+                    @Override
+                    public void failure(TwitterException exception) {
+
+                    }
+                });
 
 
             }
@@ -78,6 +97,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void failure(TwitterException exception) {
                 exception.getCause();
+            }
+        });
+    }
+
+    private void getEmailTwiiter(final TwitterSession session){
+        Toast.makeText(this, "action", Toast.LENGTH_SHORT).show();
+        TwitterAuthClient authClient = new TwitterAuthClient();
+        authClient.requestEmail(session, new Callback<String>() {
+            @Override
+            public void success(Result<String> result) {
+                Log.i("Twiiter", result.toString());
+                String emailText = (String) result.data;
+                Toast.makeText(MainActivity.this, emailText, Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                Log.e("Twiiter", exception.getMessage());
             }
         });
     }
