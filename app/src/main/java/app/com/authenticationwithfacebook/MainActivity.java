@@ -136,6 +136,8 @@ public class MainActivity extends AppCompatActivity {
                             String birthday = object.getString("birthday");
                             String profilePicUrl = object.getJSONObject("picture").getJSONObject("data").getString("url");
                             Picasso.with(MainActivity.this).load(profilePicUrl).into(imageView);
+                            Intent intent = new Intent(MainActivity.this, BasicActivity.class);
+                            startActivity(intent);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

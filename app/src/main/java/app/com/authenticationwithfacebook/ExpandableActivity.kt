@@ -18,6 +18,8 @@ class ExpandableActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.expandable_activity)
+
+
         val expandableListDataPump = ExpandableListDataPump()
         expandableListDetail = expandableListDataPump.getData()
         expandableListTitle = ArrayList<String>(expandableListDetail.keys)
